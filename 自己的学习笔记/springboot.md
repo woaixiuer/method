@@ -1,0 +1,3 @@
+注意看需要自己建立contrller，并且写好一个/hello这种才能启动springboot,官方创建的无法访问,s不需要配置application.properties
+
+如果springboot 导入了mybatisplus就需要配置application.yml,并且还需要写dao层，其实maven3.9与2021.3没冲突
