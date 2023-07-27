@@ -12,6 +12,8 @@
 
 注意github里面建立readMe.md在进行提交，使用一下代码，可能得使用vpn才能提交，github有时候不好进
 
+git那个文件夹的目录和名字不要改，否则git麻烦
+
 [手把手教你在github上传文件_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1Xs4y1i7id/?spm_id_from=333.337.search-card.all.click&vd_source=b5a2d62f8bc81232911e324d603b1275)
 
 ```
