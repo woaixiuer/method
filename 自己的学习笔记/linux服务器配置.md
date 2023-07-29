@@ -19,9 +19,10 @@ git那个文件夹的目录和名字不要改，否则git麻烦
 ```
 git init
 git add
-git commit -m "haha"
+git commit -m "haha" 
 git remote add origin https://github.com/woaixiuer/method.git
 git push -u origin master
+
 ```
 
 
@@ -210,3 +211,65 @@ server {
 前端![image-20230727131350119](E:\java exercise\网课资源\自己的学习笔记\markdown图片位置\image-20230727131350119.png)
 
 后端![image-20230727131406964](E:\java exercise\网课资源\自己的学习笔记\markdown图片位置\image-20230727131406964.png)
+
+### 6:前后端部署配置
+
+#### 6.1前端:
+
+修改这个配置就行，图中网址为你的后端服务器的ip注意端口号，下载完如果没有node_modules，就需要npm  install
+
+![image-20230729121354750](markdown图片位置/image-20230729121354750.png)
+
+前端打包时指令： npm run build:prod，会生成dist文件夹，该项目已经存到github上
+
+
+
+
+
+这个配置是设置你windows访问后端时候跳转的base_url(与linux无关)
+
+![image-20230729122845083](markdown图片位置/image-20230729122845083.png)
+
+
+
+redis的redis.conf文件（/usr/local/redis_4.0.0/........)需要修改配置（[Redis保护模式开启问题解决 - 简书 (jianshu.com)](https://www.jianshu.com/p/a275b96572df)），如下
+
+​    1：# bind 127.0.0.1  这个已经注释
+
+​    2: protected-mode no  已经修改
+
+​    3:daemonize  yes   已经改为yes(这项我没有修改，但是能正常运行)
+
+最后最重要的一步，一定要以**redis-server --protected-mode no**在redis/src下面进行运行redis，否则还是会报500这个错误，我是在x-admin那个target目录下面的springboot-log发现一堆报错,500是因为redis没有连接上还有个原因就是后端的数据库连接失败，也是报错500，解决方法见后端注意事项。
+
+前端的nginx最终配置文件（事实上我好像并没有用到nginx反向代理，即使将8088改成8082也能运行，核心配置可能就是vue的那个env.conf文件）
+
+![image-20230729123754574](markdown图片位置/image-20230729123754574.png)
+
+前端如果报错404，说明你前端或者后端没有开启或者是端口号和ip出现问题，如果报错403说明后端开启了但是cors跨域路由有问题，详见后端解决方法。
+
+login登录界面信息，看remote_addr就是我后端的ip,这个只要我改env.conf文件这个后端ip就会受到改变，而我改nginx的配置文件却不会受到影响。
+
+![image-20230729125224614](markdown图片位置/image-20230729125224614.png)
+
+#### 6.2后端
+
+后端出现403，是因为跨域没设置好，解决方法在每一个controller上面加上注解（该后端项目已经放到github上面）![image-20230729124057275](markdown图片位置/image-20230729124057275.png)
+
+注意@CrossOrigin每一个都要配置，图中配置了6个，网上说建立了MycorsConfig就不需要这么做，但是实际上还得这么做，
+
+MycorsConfig 文件内容
+
+![image-20230729124853952](markdown图片位置/image-20230729124853952.png)
+
+个人推测这个文件没气作用可能是版本问题或者是url那里得加上端口号？
+
+
+
+500还有可能是数据库连接失败或者redis连接失败，redis已经写了，数据库配置只需要改java文件就行
+
+![image-20230729125046259](markdown图片位置/image-20230729125046259.png)
+
+注意xdb后面那一串的东西，很重要
+
+springboot如果在linux多次执行脚本shell.sh也会出现一个8088端口被占用的错误导致403，原因就是你开了多个脚本，把虚拟机关了重启就行，不需要改端口号
